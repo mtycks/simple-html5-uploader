@@ -20,6 +20,8 @@ function init() {
 
 function handleFileSelect(e) {
 
+  //Check to see if there are files and if FileReader is available
+  //If both do NOT pass, then we're done here
   if(!e.target.files || !window.FileReader)return;
 
   fileTableBody.innerHTML = "";
@@ -42,7 +44,11 @@ function handleFileSelect(e) {
 
     var reader = new FileReader();
     reader.onload = function (e) {
-      var html = "<tr><td><img src=\"" + e.target.result + "\"></td><td>" + f.name + "</td></tr>";
+      var html = "<tr>";
+        html += "<td><img src=\"" + e.target.result + "\"></td>";
+        html += "<td>" + f.name + "</td>";
+        html += "<td>" + bytesToSize(f.size) + "</td>";
+      html += "<tr>";
       fileTableBody.innerHTML += html;
     }
 
@@ -52,3 +58,10 @@ function handleFileSelect(e) {
 
 
 }
+
+function bytesToSize(bytes) {
+   var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+   if (bytes == 0) return '0 Byte';
+   var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+   return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+};
