@@ -4,29 +4,38 @@
 
 var fileTable = "";
 
+//Initialize the plugin
 document.addEventListener("DOMContentLoaded", init, false);
 
 function init() {
+
+  //Add a listner to the #files input
   document.querySelector('#files').addEventListener('change', handleFileSelect, false);
+
+  //Create variables for the table and table body
   fileTable = document.querySelector("#selectedFiles-container");
   fileTableBody = document.querySelector("#selectedFiles");
+
 }
 
 function handleFileSelect(e) {
 
-  if(!e.target.files || !window.FileReader){
-    fileTable.style.display = "none";
-    return;
-  }
-
-  //If there are files that have been selected, unhide the table
-  fileTable.style.display = "block";
+  if(!e.target.files || !window.FileReader)return;
 
   fileTableBody.innerHTML = "";
 
   var files = e.target.files;
   var filesArr = Array.prototype.slice.call(files);
+
+  //Show or hide table based on filesArr
+  if( filesArr.length < 1 ){
+    fileTable.style.display = "none";
+  }else{
+    fileTable.style.display = "block";
+  }
+
   filesArr.forEach(function(f) {
+
     if(!f.type.match("image.*")) {
       return;
     }
