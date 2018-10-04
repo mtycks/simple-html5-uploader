@@ -2,6 +2,7 @@
 // https://www.raymondcamden.com/2013/09/10/Adding-a-file-display-list-to-a-multifile-upload-HTML-control
 
 
+
 var fileTable = "";
 
 //Initialize the plugin
