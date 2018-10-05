@@ -22,7 +22,7 @@
     var window = root; // Map window to root to avoid confusion
     var publicMethods = {}; // Placeholder for public methods
     var settings;
-    var filesArray;
+    var filesArray = [];
 
     // Default settings
     var defaults = {
@@ -217,9 +217,55 @@
   	 * @private
   	 * @param  {Event}     e    The change event
   	 */
-    publicMethods.getFilesArray = function ( options ){
+    publicMethods.getFilesArray = function(e){
 
-      
+      // Only run on inputs flagged for displaying
+      if ( !e.target.matches(settings.selector)) return;
+
+      //Check to see if FileReader is available,
+      //Stop if it is not available
+      if ( !window.FileReader ) return;
+
+      var files = e.target.files;
+      var filesArr = Array.prototype.slice.call(files);
+
+      //Loop through all the files
+      filesArr.forEach(function(f) {
+
+        var ext = getExtension(f.name);
+        var thumbnail;
+        var displayObject = {};
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+
+          //Let's check if this MIME type is an image
+          if(!f.type.match("image.*")) {
+            displayObject.thumbnail = null;
+          }else{
+            //But we really only want jpg/png/gif
+            if( ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif' ){
+              displayObject.thumbnail = e.target.result;
+            }else{
+              displayObject.thumbnail = null;
+            }
+          }
+
+          displayObject.filesize = f.size;
+          displayObject.filesizeString = bytesToSize(f.size);
+          displayObject.filename = f.name;
+          displayObject.extension = ext;
+
+        }
+
+        reader.readAsDataURL(f);
+
+        //Push displayObject to filesArray
+        filesArray.push(displayObject);
+
+      });
+
+      return filesArray;
 
     }
 
@@ -232,7 +278,7 @@
         settings = extend( defaults, options || {} );
 
         //Add an event listener for all input changes
-        document.addEventListener( 'change', displayFiles, false);
+        document.addEventListener( 'change', publicMethods.getFilesArray, false);
 
     };
 
