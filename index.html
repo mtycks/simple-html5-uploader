@@ -74,7 +74,9 @@
       document.addEventListener("DOMContentLoaded", docReady, false);
       function docReady(){
 
-        uploadDisplayer.init();
+        uploadDisplayer.init({
+          output: 'bootstrapTable'
+        });
 
       }
     </script>

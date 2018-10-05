@@ -26,8 +26,7 @@
 
     // Default settings
     var defaults = {
-        bootstrap: true,
-        display: 'table',
+        output: 'object',
         selector: '.displayFiles'
     };
 
@@ -135,79 +134,23 @@
     /**
   	 * List all the files selected
   	 * @private
-  	 * @param  {Event}     e    The change event
   	 */
-    var displayFiles = function (e) {
-
-        // Only run on inputs flagged for displaying
-        if ( !e.target.matches(settings.selector)) return;
+    var displayFiles = function () {
 
         var fileTable = document.querySelector("#selectedFiles-container");
         var fileTableBody = document.querySelector("#selectedFiles");
 
-        //Get the closest .form-group parent element
-        var container = e.target.closest('.form-group');
-
-        if( settings.display == 'table' ){
-
-          var table = document.createElement('table');
-          container.appendChild(table);
-
-        }
-
-        //Check to see if FileReader is available,
-        //Stop if it is not available
-        if ( !window.FileReader ) return;
-
         fileTableBody.innerHTML = "";
 
-        var files = e.target.files;
-        var filesArr = Array.prototype.slice.call(files);
-
         //Show or hide table based on filesArr
-        if( filesArr.length < 1 ){
+        if( filesArray.length < 1 ){
           fileTable.style.display = "none";
         }else{
           fileTable.style.display = "block";
         }
 
         //Loop through all the files
-        filesArr.forEach(function(f) {
-
-          var ext = getExtension(f.name);
-          var thumbnail;
-
-          var reader = new FileReader();
-
-          reader.onload = function (e) {
-
-            //Let's check if this MIME type is an image
-            if(!f.type.match("image.*")) {
-
-              thumbnail = '<span class="fa fa-file-o" style="color:red"></span>';
-
-            }else{
-
-              //But we really only want jpg/png/gif
-              if( ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif' ){
-                thumbnail = "<img src=\"" + e.target.result + "\">";
-              }else{
-                thumbnail = '<span class="fa fa-file-o" style="color:red"></span>';
-              }
-
-            }
-
-            var html = "<tr>";
-              html += "<td>"+thumbnail+"</td>";
-              html += "<td>" + f.name + "</td>";
-              html += "<td>" + bytesToSize(f.size) + "</td>";
-            html += "</tr>";
-            fileTableBody.innerHTML += html;
-          }
-
-          reader.readAsDataURL(f);
-
-        });
+        console.log(filesArray);
 
     };
 
@@ -217,7 +160,7 @@
   	 * @private
   	 * @param  {Event}     e    The change event
   	 */
-    var getFilesArray = function(e){
+    var getFilesArray = function(e, callback){
 
       // Only run on inputs flagged for displaying
       if ( !e.target.matches(settings.selector)) return;
@@ -234,7 +177,7 @@
 
         var ext = getExtension(f.name);
         var thumbnail;
-        var displayObject = {};
+        var displayObject = new Object();
         var reader = new FileReader();
 
         reader.onload = function (e) {
@@ -261,11 +204,27 @@
         reader.readAsDataURL(f);
 
         //Push displayObject to filesArray
-        filesArray.push(displayObject);
+        reader.onloadend = function(){
+          callback(displayObject);
+        }
 
       });
 
-      return filesArray;
+      //Do something based on the output in settings
+      switch(settings.output){
+
+        case 'object':
+        default:
+
+          return filesArray;
+          break;
+
+        case 'bootstrapTable':
+
+          displayFiles();
+          break;
+
+      }
 
     }
 
@@ -278,7 +237,12 @@
         settings = extend( defaults, options || {} );
 
         //Add an event listener for all input changes
-        document.addEventListener( 'change', getFilesArray, false);
+        document.addEventListener( 'change', function(e){ getFilesArray(e, pushToFilesArray) }, false);
+
+        //Callback function for change event
+        var pushToFilesArray = function(displayObject){
+          filesArray.push(displayObject);
+        }
 
     };
 
