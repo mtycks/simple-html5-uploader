@@ -7,6 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
     <title>Simple HTML5 Uploader</title>
 
@@ -30,7 +31,7 @@
           <form id="myForm" method="post" enctype="multipart/form-data">
 
             <div class="form-group">
-              <input type="file" id="files" class="form-control-file displayFiles" name="files" multiple accept="image/*">
+              <input type="file" id="files" class="form-control-file displayFiles" name="files" multiple>
             </div>
 
                 <div id="selectedFiles-container" class="displayFiles-container" style="display:none">
@@ -45,7 +46,7 @@
                     <tbody id="selectedFiles"></tbody>
                     <tfoot>
                       <tr>
-                        <td colspan="2">
+                        <td colspan="3">
                           <p><em>Files will be uploaded when form is submitted</em></p>
                         </td>
                       </tr>

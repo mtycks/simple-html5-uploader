@@ -22,6 +22,7 @@
     var window = root; // Map window to root to avoid confusion
     var publicMethods = {}; // Placeholder for public methods
     var settings;
+    var filesArray;
 
     // Default settings
     var defaults = {
@@ -110,6 +111,27 @@
   		return null;
   	};
 
+
+    /**
+  	 * Get file extension from string using regex
+  	 * @private
+  	 * @param  {String}  filename  String of filename to extract file extension
+  	 * @return {String}            Returns null if no extension found
+  	 */
+  	var getExtension = function ( filename ) {
+
+  		var regex = /(?:\.([^.]+))?$/;
+      var extension = regex.exec(filename)[1];
+
+      if( extension != undefined && extension != null){
+        extension = extension.toString().toLowerCase();
+      }else{
+        extension = null;
+      }
+
+  		return extension;
+  	};
+
     /**
   	 * List all the files selected
   	 * @private
@@ -149,20 +171,34 @@
           fileTable.style.display = "block";
         }
 
-        console.log(files);
-
+        //Loop through all the files
         filesArr.forEach(function(f) {
 
-          if(!f.type.match("image.*")) {
-            return;
-          }
+          var ext = getExtension(f.name);
+          var thumbnail;
 
           var reader = new FileReader();
 
           reader.onload = function (e) {
 
+            //Let's check if this MIME type is an image
+            if(!f.type.match("image.*")) {
+
+              thumbnail = '<span class="fa fa-file-o" style="color:red"></span>';
+
+            }else{
+
+              //But we really only want jpg/png/gif
+              if( ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'gif' ){
+                thumbnail = "<img src=\"" + e.target.result + "\">";
+              }else{
+                thumbnail = '<span class="fa fa-file-o" style="color:red"></span>';
+              }
+
+            }
+
             var html = "<tr>";
-              html += "<td><img src=\"" + e.target.result + "\"></td>";
+              html += "<td>"+thumbnail+"</td>";
               html += "<td>" + f.name + "</td>";
               html += "<td>" + bytesToSize(f.size) + "</td>";
             html += "</tr>";
@@ -174,6 +210,18 @@
         });
 
     };
+
+
+    /**
+  	 * Method to get an array of the files for displaying
+  	 * @private
+  	 * @param  {Event}     e    The change event
+  	 */
+    publicMethods.getFilesArray = function ( options ){
+
+      
+
+    }
 
     /**
      * Another public method
