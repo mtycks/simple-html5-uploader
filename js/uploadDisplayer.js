@@ -217,7 +217,7 @@
   	 * @private
   	 * @param  {Event}     e    The change event
   	 */
-    publicMethods.getFilesArray = function(e){
+    var getFilesArray = function(e){
 
       // Only run on inputs flagged for displaying
       if ( !e.target.matches(settings.selector)) return;
@@ -278,7 +278,7 @@
         settings = extend( defaults, options || {} );
 
         //Add an event listener for all input changes
-        document.addEventListener( 'change', publicMethods.getFilesArray, false);
+        document.addEventListener( 'change', getFilesArray, false);
 
     };
 
