@@ -232,6 +232,9 @@
             callback(displayObject, 0);
           }
 
+          //TO DO: add functionality to add rows to the display fileTable
+          //As they're being read
+
         }
 
       });
