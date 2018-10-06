@@ -150,7 +150,23 @@
         }
 
         //Loop through all the files
-        console.log(filesArray);
+        for( var i=0; i < filesArray.length; i++ ){
+
+          var img;
+          if(filesArray[i].thumbnail != null){
+            img = "<img src='" + filesArray[i].thumbnail + "' />";
+          }else{
+            img = '<span class="fa fa-file-o" style="font-size:50px"></span>';
+          }
+
+          var html = "<tr>";
+            html += "<td>"+img+"</td>";
+            html += "<td>" + filesArray[i].filename + "</td>";
+            html += "<td>" + filesArray[i].filesizeString + "</td>";
+          html += "</tr>";
+          fileTableBody.innerHTML += html;
+
+        }
 
     };
 
@@ -171,6 +187,7 @@
 
       var files = e.target.files;
       var filesArr = Array.prototype.slice.call(files);
+      var increment = 0;
 
       //Loop through all the files
       filesArr.forEach(function(f) {
@@ -205,26 +222,19 @@
 
         //Push displayObject to filesArray
         reader.onloadend = function(){
-          callback(displayObject);
+
+          //Increment the incrment variable
+          increment++;
+
+          if( increment == filesArr.length ){
+            callback(displayObject, 1);
+          }else{
+            callback(displayObject, 0);
+          }
+
         }
 
       });
-
-      //Do something based on the output in settings
-      switch(settings.output){
-
-        case 'object':
-        default:
-
-          return filesArray;
-          break;
-
-        case 'bootstrapTable':
-
-          displayFiles();
-          break;
-
-      }
 
     }
 
@@ -240,8 +250,31 @@
         document.addEventListener( 'change', function(e){ getFilesArray(e, pushToFilesArray) }, false);
 
         //Callback function for change event
-        var pushToFilesArray = function(displayObject){
+        var pushToFilesArray = function(displayObject, last){
           filesArray.push(displayObject);
+
+          //If this is the last item, do your thang
+          if(last == 1){
+
+            //Do something based on the output in settings
+            switch(settings.output){
+
+              case 'object':
+              default:
+
+                return filesArray;
+                break;
+
+              case 'bootstrapTable':
+
+                displayFiles();
+                break;
+
+            }
+
+
+
+          }
         }
 
     };
